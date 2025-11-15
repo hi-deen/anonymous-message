@@ -6,22 +6,8 @@ export default function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-
-//   const handleSubmit = async (e) => {
-//   e.preventDefault();
-//   try {
-//     const res = await axios.post("http://localhost:5000/api/users/login", form);
-//     localStorage.setItem("token", res.data.token);
-//     localStorage.setItem("user", JSON.stringify(res.data.user));
-//     navigate("/dashboard");
-//   } catch (err) {
-//     console.error(err);
-//     alert("Login failed: " + (err.response?.data?.message || err.message));
-//   }
-// };
-
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,12 +16,91 @@ export default function Register() {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Register</h2>
-      <input name="username" placeholder="Username" onChange={handleChange} />
-      <input name="email" placeholder="Email" onChange={handleChange} />
-      <input name="password" placeholder="Password" type="password" onChange={handleChange} />
-      <button type="submit">Register</button>
-    </form>
+    <div className="min-h-screen flex items-center justify-center 
+                    bg-gray-50 dark:bg-gray-900 px-4">
+
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md bg-white dark:bg-gray-800 
+                   rounded-2xl p-8 shadow-lg shadow-gray-300/40 dark:shadow-black/40 
+                   space-y-6 animate-fadeInUp"
+      >
+        {/* Title */}
+        <h2 className="text-2xl font-bold text-center 
+                       text-gray-800 dark:text-white">
+          Create an Account
+        </h2>
+
+        {/* Username */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+            Username
+          </label>
+          <input
+            name="username"
+            placeholder="Choose a username"
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded-lg 
+                       bg-gray-100 dark:bg-gray-700 
+                       border border-gray-300 dark:border-gray-600 
+                       text-gray-800 dark:text-gray-100
+                       focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+            Email
+          </label>
+          <input
+            name="email"
+            placeholder="Enter your email"
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded-lg 
+                       bg-gray-100 dark:bg-gray-700 
+                       border border-gray-300 dark:border-gray-600 
+                       text-gray-800 dark:text-gray-100
+                       focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+        </div>
+
+        {/* Password */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+            Password
+          </label>
+          <input
+            name="password"
+            type="password"
+            placeholder="Create a password"
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded-lg 
+                       bg-gray-100 dark:bg-gray-700 
+                       border border-gray-300 dark:border-gray-600 
+                       text-gray-800 dark:text-gray-100
+                       focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700
+                     text-white font-semibold transition-all shadow-md
+                     hover:shadow-lg active:scale-95"
+        >
+          Register
+        </button>
+
+        {/* Already have an account? */}
+        <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+          Already have an account?{" "}
+          <a href="/login" className="text-emerald-600 hover:underline">
+            Login
+          </a>
+        </p>
+      </form>
+    </div>
   );
 }

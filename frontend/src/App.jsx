@@ -13,7 +13,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/public" element={<PublicMessage />} />
+      {/* <Route path="/public" element={<PublicMessage />} /> */}
       <Route path="/u/:username" element={<PublicMessage />} />
     </Routes>
   );
