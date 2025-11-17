@@ -5,6 +5,8 @@ import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import PublicMessage from "./pages/PublicMessage.jsx";
 import Register from "./pages/Register.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import MainLayout from "./components/MainLayout.jsx";
 
 function App() {
   return (
@@ -12,7 +14,11 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard" element={<ProtectedRoute>
+      <MainLayout>
+        <Dashboard />
+      </MainLayout>
+    </ProtectedRoute>} />
       {/* <Route path="/public" element={<PublicMessage />} /> */}
       <Route path="/u/:username" element={<PublicMessage />} />
     </Routes>

@@ -29,14 +29,21 @@ export const getMessages = async (req, res) => {
   }
 };
 
-// controllers/messageController.js
-// export const getUserMessages = async (req, res) => {
-//   try {
-//     const { username } = req.params;
-//     const messages = await Message.find({ recipient: username });
-//     res.json(messages);
-//   } catch (err) {
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+export const deleteMessage = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const message = await Message.findById(id);
+    if (!message) return res.status(404).json({ error: "Message not found" });
+
+    // Verify ownership
+    if (message.userId.toString() !== req.userId) {
+      return res.status(403).json({ error: "Unauthorized to delete this message" });
+    }
+
+    await Message.findByIdAndDelete(id);
+    res.json({ success: true, message: "Message deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
