@@ -1,9 +1,11 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../axios.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -11,13 +13,21 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post(
-      "http://localhost:5000/api/users/login",
-      form
-    );
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    navigate("/dashboard");
+    setError("");
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "/users/login",
+        form
+      );
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.error || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,14 +82,22 @@ export default function Login() {
           />
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Submit button */}
         <button
           type="submit"
+          disabled={loading}
           className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700
                      text-white font-semibold shadow-md transition-all
-                     hover:shadow-lg active:scale-[.98]"
+                     hover:shadow-lg active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         {/* Link */}

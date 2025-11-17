@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../axios.js";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function PublicMessage() {
@@ -7,18 +7,29 @@ export default function PublicMessage() {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim()) return;
 
-    await axios.post(
-      `http://localhost:5000/api/messages/${username}`,
-      { text }
-    );
+    setError("");
+    setLoading(true);
+    try {
+      await axios.post(
+        `/messages/${username}`,
+        { text }
+      );
 
-    setText("");
-    setSent(true);
+      setText("");
+      setSent(true);
+      setTimeout(() => setSent(false), 3000);
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

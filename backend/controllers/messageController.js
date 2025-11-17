@@ -6,6 +6,13 @@ export const createMessage = async (req, res) => {
   const { text } = req.body;
 
   try {
+    if (!text || text.trim().length === 0) {
+      return res.status(400).json({ error: "Message cannot be empty" });
+    }
+    if (text.length > 500) {
+      return res.status(400).json({ error: "Message exceeds 500 character limit" });
+    }
+
     const user = await User.findOne({ username });
     if (!user) return res.status(404).json({ error: "User not found" });
 

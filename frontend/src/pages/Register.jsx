@@ -1,9 +1,11 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../axios.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -11,8 +13,16 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:5000/api/users/register", form);
-    navigate("/login");
+    setError("");
+    setLoading(true);
+    try {
+      await axios.post("/users/register", form);
+      navigate("/login");
+    } catch (err) {
+      setError(err.response?.data?.error || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -83,14 +93,22 @@ export default function Register() {
           />
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Submit */}
         <button
           type="submit"
+          disabled={loading}
           className="w-full py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700
                      text-white font-semibold transition-all shadow-md
-                     hover:shadow-lg active:scale-95"
+                     hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Register
+          {loading ? "Registering..." : "Register"}
         </button>
 
         {/* Already have an account? */}
