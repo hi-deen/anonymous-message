@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
     
 .env
+AUTHENTICATION_GUIDE.md
+CHANGES_SUMMARY.md
+CODE_REVIEW.md
