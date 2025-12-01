@@ -297,7 +297,9 @@ Two options:
 - Set env vars MONGO_URI and JWT_SECRET. Set `VITE_API_URL=/api` before build.
 
 ## Testing
+- Linting: `npm run lint` (frontend) and `npm run lint:fix` to auto-fix
 - Manual: use Postman or curl to confirm endpoints and auth flows
+- Unit tests: (coming soon)
 
 ## Contributing
 - Fork > branch > PR
