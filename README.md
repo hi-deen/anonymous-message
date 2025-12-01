@@ -70,27 +70,218 @@ JWT_SECRET=<strong-secret>
 VITE_API_URL=/api   # for single-service; use backend URL for split deploy
 ```
 
-## API (short)
-Base: <VITE_API_URL or /api>
+## API
 
-- POST /api/users/register
-  Body: { username, email, password }
-- POST /api/users/login
-  Body: { username, password }
-  Response: { token, user }
-- GET /api/messages/:username
-  Public messages for a user
-- POST /api/messages/:username
-  Body: { text } (anonymous)
-- DELETE /api/messages/:id
-  Protected — Authorization: Bearer <token>
+Base URL: `/api` (or your backend URL in production)
 
-Include full request/response examples and error codes here.
+### User Registration
+**POST** `/api/users/register`
+
+Request:
+```json
+{
+  "username": "alice",
+  "email": "alice@example.com",
+  "password": "securePassword123"
+}
+```
+
+Response (201):
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "user": {
+    "_id": "507f1f77bcf86cd799439011",
+    "username": "alice",
+    "email": "alice@example.com"
+  }
+}
+```
+
+Errors:
+- **400** — Missing/invalid fields or username already exists
+  ```json
+  { "error": "Username already exists" }
+  ```
+
+---
+
+### User Login
+**POST** `/api/users/login`
+
+Request:
+```json
+{
+  "username": "alice",
+  "password": "securePassword123"
+}
+```
+
+Response (200):
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "_id": "507f1f77bcf86cd799439011",
+    "username": "alice",
+    "email": "alice@example.com"
+  }
+}
+```
+
+Errors:
+- **401** — Invalid credentials
+  ```json
+  { "error": "Invalid username or password" }
+  ```
+- **404** — User not found
+  ```json
+  { "error": "User not found" }
+  ```
+
+---
+
+### Get User Profile
+**GET** `/api/users/profile`
+
+Headers:
+```
+Authorization: Bearer <token>
+```
+
+Response (200):
+```json
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "username": "alice",
+  "email": "alice@example.com",
+  "createdAt": "2025-12-01T10:30:00Z"
+}
+```
+
+Errors:
+- **401** — Missing or invalid token
+  ```json
+  { "error": "No token provided" }
+  ```
+
+---
+
+### Send Anonymous Message
+**POST** `/api/messages/:username`
+
+Request:
+```json
+{
+  "text": "You're doing great work!"
+}
+```
+
+Response (200):
+```json
+{
+  "success": true,
+  "message": "Message sent anonymously!"
+}
+```
+
+Errors:
+- **400** — Empty or too long message
+  ```json
+  { "error": "Message cannot be empty" }
+  ```
+  ```json
+  { "error": "Message exceeds 500 character limit" }
+  ```
+- **404** — User not found
+  ```json
+  { "error": "User not found" }
+  ```
+
+---
+
+### Get Messages for User
+**GET** `/api/messages/:username`
+
+Response (200) — array sorted by newest first:
+```json
+[
+  {
+    "_id": "507f1f77bcf86cd799439012",
+    "userId": "507f1f77bcf86cd799439011",
+    "text": "You're awesome!",
+    "createdAt": "2025-12-01T15:45:00Z"
+  },
+  {
+    "_id": "507f1f77bcf86cd799439013",
+    "userId": "507f1f77bcf86cd799439011",
+    "text": "Keep it up!",
+    "createdAt": "2025-12-01T14:20:00Z"
+  }
+]
+```
+
+Errors:
+- **404** — User not found
+  ```json
+  { "error": "User not found" }
+  ```
+
+---
+
+### Delete Message
+**DELETE** `/api/messages/:id`
+
+Headers:
+```
+Authorization: Bearer <token>
+```
+
+Response (200):
+```json
+{
+  "success": true,
+  "message": "Message deleted"
+}
+```
+
+Errors:
+- **401** — Missing token
+  ```json
+  { "error": "No token provided" }
+  ```
+- **403** — Not the message owner
+  ```json
+  { "error": "Unauthorized to delete this message" }
+  ```
+- **404** — Message not found
+  ```json
+  { "error": "Message not found" }
+  ```
+
+---
 
 ## Authentication
-- JWT tokens returned by /api/users/login
-- Frontend stores token (e.g., localStorage) and sends Authorization header
-- Tokens expire (configure in backend); handle 401 by redirecting to login
+
+All protected endpoints require a valid JWT token in the `Authorization` header:
+
+```
+Authorization: Bearer <token>
+```
+
+- Token is returned after successful login.
+- Token expires after 7 days.
+- On 401 response, redirect user to login page and clear stored token.
+
+Example (using fetch):
+```javascript
+const response = await fetch('/api/users/profile', {
+  headers: {
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+});
+```
 
 ## Deployment
 Two options:
