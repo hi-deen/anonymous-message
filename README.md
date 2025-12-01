@@ -114,7 +114,8 @@ Two options:
 - Follow existing code style; run linters
 
 ## License
-Specify license (e.g., MIT). Add LICENSE file.
+
+This project is licensed under the MIT License — see [LICENSE](./LICENSE) for details.
 
 ## Contact & Security
 - Report security issues privately at: [hishamadam77@gmail.com](hishamadam77@gmail.com)
